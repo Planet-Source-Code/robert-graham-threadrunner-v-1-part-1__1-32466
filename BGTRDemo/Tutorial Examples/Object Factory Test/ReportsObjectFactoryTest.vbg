@@ -1,0 +1,3 @@
+VBGROUP 5.0
+Project=ReportsDLL.vbp
+StartupProject=ReportsDLLTest.vbp

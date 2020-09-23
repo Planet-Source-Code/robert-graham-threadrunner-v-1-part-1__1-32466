@@ -1,0 +1,7 @@
+frmTestMemory = 66, 66, 481, 358, , 22, 22, 437, 314, C
+CMemoryMapFileTest = 44, 44, 459, 336, 
+modConstants = 132, 132, 468, 400, 
+modStdError = 0, 0, 0, 0, C
+modGlobals = 0, 0, 0, 0, C
+modMapMemoryAPI = 0, 0, 0, 0, C
+modResource = 0, 0, 0, 0, C

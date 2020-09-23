@@ -1,0 +1,154 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>BGThreadRunner and DesignPatterns</title>
+</head>
+
+<body>
+
+<p align="center"><b>BGThreadRunner and DesignPatterns, Shared Memory, and
+Multithreading in VB6 - A Tutorial</b> </p>
+
+<p>This is a tutorial which illustrates some useful object oriented concepts and
+one of several ways to share common memory in the Win32 environment, which is
+used here to bypass the standard COM marshalling process when transferring large
+data objects and data objects not readily handled by standard marshalling.&nbsp;
+All these techniques are combined to create a small multithreaded task server component that
+can be used to run background tasks in conjunction with and for standard single
+threaded executables.&nbsp; </p>
+<p>This is a <b><i>lengthy</i></b> tutorial - there are 7 projects required to
+build the entire application.&nbsp; There are 4 additional study projects that
+illustrate important concepts and aspects of the code and components.&nbsp;&nbsp;
+The download is split into four parts - four zip files -&nbsp; <font face="Arial" size="2">BGTRDemo.zip</font>,
+<font face="Arial" size="2">BGTRDemo1.zip</font>, <font face="Arial" size="2">BGTRDemo2.zip</font>
+and <font face="Arial" size="2">BGTRDemo3.zip</font>.&nbsp; Not my preference,
+but the PSC upload choked on the single zip.&nbsp; So I split it into two
+parts.&nbsp; It choked on those as well.&nbsp; Maybe I coulda got it with three,
+but this business of splitting up HTML help is a screamin' pain, and I was way
+tired of messing with that long before I tried to upload anything already.&nbsp;
+So four it is!&nbsp; You need all four pieces to put this puzzle together. </p>
+<p> The
+compiled HTML help is pushing three quarters of a meg.&nbsp; But don't let that
+scare you off.&nbsp; ;-)&nbsp; This tutorial is written with intermediate level
+coders in mind.&nbsp; A &quot;for and by&quot; deal&nbsp; you could say - I've
+been writing VB code for maybe a year and a half now.&nbsp; Before that, I did
+something else completely different.&nbsp; If you currently write code
+in class modules, jump on in, the water's fine! </p>
+<p>The tutorial is not about multithreading per se, although that is what a lot
+of the specific application deals with.&nbsp; Hopefully you'll loose a lot of
+interest in multithreading by the time this is all over.&nbsp; The OOP
+techniques shown here are much more useful and widely applicable.&nbsp;&nbsp; </p>
+<p>But there seems to be a lot of
+interest in multithreading, proof in itself there is also a lot of misunderstanding.&nbsp; So I'll focus
+on that aspect mainly in this introduction.&nbsp;&nbsp; </p>
+<p>First of all this is not &quot;real multithreading&quot;, whatever that is
+supposed to mean.&nbsp; C'mon!&nbsp; This is VB! Get real! (so to speak
+;-)&nbsp; If you really want real multithreading, try C++.&nbsp; If you don't
+dig C++, you definitely should forget about &quot;real&quot;
+multithreading.&nbsp; Most C++ code is a walk in the park in comparison. </p>
+<p>This is also not based on VB.NET.&nbsp; However, I have examined the VB.NET
+threading models, and I personally feel like if you are interested or planning
+on pursuing that course, this tutorial will in fact prove <b><i>very</i></b>
+helpful.&nbsp; The syntax is different, but many of the concepts are the
+same.&nbsp; The techniques shown here are based upon a task (class(es) in a DLL)
+joining a worker thread which then executes the task - code in the class(es).&nbsp;
+VB.NET threading is based upon a thread joining a class...&nbsp; I think the
+approach here will help you to better understand how to successfully design a
+class so a thread can run the code in it.&nbsp; </p>
+<p>We'll use familiar VB6 techniques.&nbsp; The difference between this tutorial
+and most I have seen is we will actually try to do something with threads.&nbsp;
+I'm not knocking other people's work - I have studied some of it and found it
+useful.&nbsp; But the reality is, spawning threads is not a big thing.&nbsp;
+Trying to actually use threads is a whole new ballgame. </p>
+<p> I think it is important that
+people have a better understanding of the realities of multithreading. </p>
+<p>The belief that threads will turn applications into racehorses is totally
+false, and that misconception is bad news.&nbsp;&nbsp; I worked with a couple of
+guys who thought about &quot;multithreading the application to increase the performance&quot;.&nbsp; This &quot;application&quot;, or abomination is more correct,
+was pushing double digit megs of VB code compiled as a single monolithic executable!&nbsp;
+There was nothing to thread!&nbsp; </p>
+<p> Not surprisingly, people programming in the
+Dark Ages are prone to believe in &quot;magic&quot;.&nbsp;&nbsp; </p>
+<p>The best way to think about threads is thinking in terms of letting a worker
+thread open up a can of ass-whip on some kind of long running background task
+that runs essentially as a standalone process.&nbsp; Now you're talkin'!&nbsp;
+But the &quot;multithreading the application to increase performance&quot;
+business - that's just a notion! </p>
+<p>That may be hard for some to accept, but the truth is, all the hype about
+multithreading is mostly just that - hype.</p>
+<p>Most VB apps use a database - you have better options to get the same
+thing.&nbsp; MTS, MSMQ is what a lot of people are going to.&nbsp; And even if
+you do not or cannot use those, adding multithreading to, for example, just a
+plain old ADO command that returns a recordset from a database is as easy as
+adding this simple word:&nbsp; adAsyncFetch.&nbsp; You really don't need to
+thread an app yourself on that end, for the most part anyway.&nbsp;&nbsp;</p>
+<p> Most VB apps
+are also highly graphical, and UI oriented on the other end.&nbsp; Forget that,
+you'll never thread that, or not to any great extent.&nbsp; A UI runs on a
+single thread because a UI requires a single message window in order to
+synchronize processing all of the various events.&nbsp;&nbsp; Even if you could
+extensively thread a UI, (you can't), the results would be
+chaos.&nbsp; Multiple threads, concurrently interacting with a UI, and
+presumably a user on the other side - how is that going to work for you?&nbsp;
+(Or rather your user?) It's not.&nbsp; Period.&nbsp;&nbsp;&nbsp;</p>
+<p> So, how much of your
+app does that leave?</p>
+<p>If you are looking performance, multithreading is just not where you'll find
+it.&nbsp; Don't get caught up in getting the magic, it might get you
+instead.&nbsp; There is absolutely no one-size-fits-all solution to the
+performance equation.&nbsp; The only hard and fast rule you can use is the logical place to start is benchmarking, followed by analysis
+for possible action on existing code, followed by a rational analysis of
+additional options.&nbsp;&nbsp;</p>
+<p>I tend to favor mixed platform designs - each platform for it's optimal
+usage.&nbsp; Specifically, C++/ATL and VB.&nbsp; MFC is nearly as slow as VB,
+you might as well stick with VB.&nbsp; ATL COM tends to be very fast.&nbsp; But
+it depends upon your application.&nbsp; If most of your execution time is spent
+in the ADO library, there is not much point in rebuilding it with ATL
+lightweights.&nbsp; (Not much point in multithreading either!!!)&nbsp;&nbsp;</p>
+<p>So really, the only categorical statement you can make is
+analysis.&nbsp;&nbsp;</p>
+<p> You'll never cut your execution time
+at all with threads unless you toss in another CPU along with the newt's eyes.&nbsp;
+;-)&nbsp; Even then, you will not cut it in half, not even close, because of
+overhead you add in the process.&nbsp; I've rewritten two functions in code that
+had not been adequately benchmarked
+and analyzed, and cut the overall execution time in half! That's the rule, not
+the exception, for code that has never been benchmarked.&nbsp; I'm sure others can testify to similar experiences.</p>
+<p>The best thing you can do with threads is forget about them.&nbsp; That
+probably will not happen though, so you probably need to understand them better.&nbsp;
+We'll look at about the simplest model for multithreading that you can actually
+do any kind of work with.</p>
+<p>To get started, unzip the downloads, and <b><i>make sure you let it recreate
+the original directory structure</i></b> - the zip files will expand to somewhat enormous
+proportions, and some of the individual source files have common names.&nbsp;
+Then double click on the HTML help file - there are two, but you want the one in
+the main directory - <font face="Arial" size="2">..\BGTRDemo\BGThreadRunnerDemoHelp.chm</font>.</p>
+<p><b><i><font size="4">Please read the instructions in the help before you try
+to build the sample application !!!!&nbsp; The build cannot be consolidated into
+a simple group.&nbsp; It requires several steps, and you must follow the
+directions explicitly!!!</font></i></b></p>
+<p>I completely tested the build from scratch using the zip file, and it worked
+fine.&nbsp; But you <b><i>must</i></b> perform the procedure correctly.&nbsp;
+All the required dlls, ocxs, etc. should be on any machine that has VS6/VB6
+Professional or higher.&nbsp; The required files are also listed in tables in an
+appendix.&nbsp; The code and build have been tested and run on Win98.&nbsp; I
+was not able to test anything on NT4 or Win2K, but I have run similar code on
+NT4 with no problem.&nbsp; I do not anticipate you&nbsp; will encounter any
+problems.</p>
+<p>If you have problems, comments, or questions, you can <a href="mailto:rwest_graham@hotmail.com">e-mail
+me</a>.&nbsp; Complaints should be directed to my agent - send them to <a href="mailto:billgrates@microsloth.con">billgrates@microsloth.con</a>.</p>
+<p>Hopefully you'll find something of interest.&nbsp; Multithreading aside,
+there are all kinds of other goodies inside - stuff that people who actively
+write code for a living can actually use.&nbsp; I obviously have a lot of time on my
+hands, and not enough to do with it.&nbsp; I currently don't
+actively write code (or do anything) for a living and this stuff&nbsp;does not
+pay any bills.&nbsp; I am definitely
+available, <a href="mailto:rwest_graham@hotmail.com"> e-mail me</a> - I live somewhere in the 20th-21st century,
+Atlanta metro area.&nbsp; ;-)&nbsp;</p>
+
+</body>
+
+</html>
