@@ -1,0 +1,5 @@
+IReport = 88, 88, 522, 426, 
+IReportFactory = 110, 110, 544, 448, 
+CReportFactory = 62, 20, 496, 358, 
+CSummary = 56, 27, 490, 365, 
+CDetailed = 0, 0, 434, 338, 

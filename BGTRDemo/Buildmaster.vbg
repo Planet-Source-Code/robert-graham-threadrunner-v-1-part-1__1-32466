@@ -1,0 +1,7 @@
+VBGROUP 5.0
+Project=MainWorks DLL\BGTRMainWorks.vbp
+Project=DBWorks DLL\BGTRDBWorks.vbp
+Project=Auxiliary DLLs\VBADOTools\VBADOTools.vbp
+Project=Auxiliary DLLs\LinkedTimers\LinkedTimers.vbp
+StartupProject=BGThreadRunner\BGThreadRunner.vbp
+Project=Auxiliary DLLs\SharedMemMaps32\SharedMemMaps32.vbp

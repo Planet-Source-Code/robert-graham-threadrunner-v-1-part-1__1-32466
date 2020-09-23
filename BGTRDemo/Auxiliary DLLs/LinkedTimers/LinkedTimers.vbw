@@ -1,0 +1,8 @@
+ILinkTimer = 30, 3, 461, 276, 
+modGlobals = 44, 16, 398, 289, 
+CFireTimer = 0, 0, 438, 273, 
+CLinkTimer = -62, 6, 497, 279, 
+CLinkTimers = -21, 40, 482, 313, 
+modTimerAPI = -24, 25, 358, 298, 
+modTimerProc = -21, -4, 417, 269, 
+modStdError = 8, 8, 364, 277, 

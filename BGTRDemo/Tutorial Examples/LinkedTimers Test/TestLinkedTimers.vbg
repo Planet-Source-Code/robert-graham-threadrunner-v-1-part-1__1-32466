@@ -1,0 +1,3 @@
+VBGROUP 5.0
+StartupProject=TestLinkedTimers.vbp
+Project=..\..\Auxiliary DLLs\LinkedTimers\LinkedTimers.vbp
